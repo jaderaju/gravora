@@ -4,6 +4,7 @@ import { Eye, EyeOff } from 'lucide-react';
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -12,10 +13,17 @@ const LoginPage = ({ onLogin }) => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
 
+    if (isRegistering) {
+      alert(`✅ Registered user: ${email}\nYou can now login.`);
+      setIsRegistering(false);
+      setIsLoading(false);
+      return;
+    }
+
     if (email === 'admin@gravora.com' && password === 'demo123') {
       onLogin({ email, name: 'Admin User', role: 'Administrator' });
     } else {
-      alert('Invalid credentials. Please use admin@gravora.com / demo123');
+      alert('Invalid credentials. Use admin@gravora.com / demo123');
       setIsLoading(false);
     }
   };
@@ -48,7 +56,7 @@ const LoginPage = ({ onLogin }) => {
           <p style={{ color: '#94a3b8', fontSize: '18px', margin: 0 }}>AI-DRIVEN GRC INTELLIGENCE</p>
         </div>
 
-        {/* Form */}
+        {/* Auth Card */}
         <div style={{
           background: 'rgba(30, 41, 59, 0.6)',
           backdropFilter: 'blur(12px)',
@@ -57,11 +65,12 @@ const LoginPage = ({ onLogin }) => {
           border: '1px solid rgba(71, 85, 105, 0.5)'
         }}>
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', textAlign: 'center', marginBottom: '32px' }}>
-            Welcome Back
+            {isRegistering ? 'Register New User' : 'Welcome Back'}
           </h2>
+
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ color: '#cbd5e1', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Email Address</label>
+              <label style={{ color: '#cbd5e1', fontSize: '14px', display: 'block', marginBottom: '8px' }}>Email Address</label>
               <input
                 type="email"
                 value={email}
@@ -76,14 +85,13 @@ const LoginPage = ({ onLogin }) => {
                   border: '1px solid #475569',
                   color: 'white',
                   borderRadius: '8px',
-                  fontSize: '16px',
-                  outline: 'none'
+                  fontSize: '16px'
                 }}
               />
             </div>
 
             <div style={{ marginBottom: '24px', position: 'relative' }}>
-              <label style={{ color: '#cbd5e1', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Password</label>
+              <label style={{ color: '#cbd5e1', fontSize: '14px', display: 'block', marginBottom: '8px' }}>Password</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -98,8 +106,7 @@ const LoginPage = ({ onLogin }) => {
                   border: '1px solid #475569',
                   color: 'white',
                   borderRadius: '8px',
-                  fontSize: '16px',
-                  outline: 'none'
+                  fontSize: '16px'
                 }}
               />
               <button
@@ -131,27 +138,28 @@ const LoginPage = ({ onLogin }) => {
                 fontWeight: '600',
                 borderRadius: '8px',
                 cursor: isLoading ? 'not-allowed' : 'pointer',
-                opacity: isLoading ? 0.5 : 1,
-                fontSize: '16px'
+                fontSize: '16px',
+                marginBottom: '12px'
               }}
             >
-              {isLoading ? 'Signing In...' : 'Sign In to Gravora GRC'}
+              {isLoading ? 'Processing...' : isRegistering ? 'Register Account' : 'Sign In to Gravora GRC'}
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div style={{
-            marginTop: '32px',
-            padding: '16px',
-            background: 'rgba(51, 65, 85, 0.3)',
-            borderRadius: '8px',
-            border: '1px solid rgba(71, 85, 105, 0.5)',
-            color: '#cbd5e1',
-            fontSize: '14px'
-          }}>
-            <strong>Demo Credentials:</strong><br />
-            Email: <span style={{ color: '#93c5fd' }}>admin@gravora.com</span><br />
-            Password: <span style={{ color: '#93c5fd' }}>demo123</span>
+          <div style={{ textAlign: 'center' }}>
+            <button
+              onClick={() => setIsRegistering(!isRegistering)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#93c5fd',
+                fontSize: '14px',
+                marginTop: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              {isRegistering ? '← Back to Login' : 'New here? Register'}
+            </button>
           </div>
         </div>
 
