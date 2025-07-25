@@ -20,7 +20,7 @@ import Administration from '../modules/Administration';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
-  const [activeModule, setActiveModule] = useState('dashboard');
+  const [activeModule, setActiveModule] = useState('assets');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -66,18 +66,19 @@ const Dashboard = () => {
       case 'admin':
         return <Administration />;
       default:
-        return <div style={{ padding: '32px', color: '#cbd5e1' }}>
-          <h1 style={{ fontSize: '28px', fontWeight: 'bold' }}>Welcome, {user?.name || user?.email}</h1>
-          <p style={{ marginTop: '8px', color: '#94a3b8' }}>
-            Use the sidebar to navigate modules.
-          </p>
-        </div>;
+        return (
+          <div style={{ padding: '32px', color: '#cbd5e1' }}>
+            <h1 style={{ fontSize: '28px', fontWeight: 'bold' }}>Welcome, {user?.name || user?.email}</h1>
+            <p style={{ marginTop: '8px', color: '#94a3b8' }}>
+              Use the sidebar to navigate modules.
+            </p>
+          </div>
+        );
     }
   };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0f172a' }}>
-      {/* Sidebar */}
       <div style={{
         width: isMobile ? '280px' : '200px',
         background: '#1e293b',
@@ -135,9 +136,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Header */}
         <div style={{
           height: '60px',
           background: '#1e293b',
@@ -169,8 +168,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Module */}
-        <div style={{ flex: 1 }}>{renderModuleContent()}</div>
+        <div style={{ flex: 1 }}>
+          {renderModuleContent()}
+        </div>
       </div>
     </div>
   );
