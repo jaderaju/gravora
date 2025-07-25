@@ -10,7 +10,7 @@ import {
   Menu,
 } from 'lucide-react';
 
-import { useAuth } from '../../hooks/useAuth';
+import { AuthProvider, useAuth } from './hooks/useAuth';
 
 import AssetRegistry from '../modules/AssetRegistry';
 import RiskRegister from '../modules/RiskRegister';
