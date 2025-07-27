@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { supabase } from 'src/lib/supabase.js'; // ensure this path is correct
+import { supabase } from '../../lib/supabase.js';
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
