@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { supabase } from '../../lib/supabase'; // ✅ Make sure this path is correct
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -13,19 +14,25 @@ const LoginPage = ({ onLogin }) => {
     setIsLoading(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      if (isRegistering) {
-        alert(`✅ Registered user: ${email}\nYou can now login.`);
-        setIsRegistering(false);
+      // ✅ Hardcoded admin login
+      if (!isRegistering && email === 'admin@gravora.com' && password === 'demo123') {
+        onLogin({ email, name: 'Admin User', role: 'Administrator' });
         return;
       }
 
-      if (email === 'admin@gravora.com' && password === 'demo123') {
-        onLogin({ email, name: 'Admin User', role: 'Administrator' });
+      if (isRegistering) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        alert('✅ Registered! You can now login.');
+        setIsRegistering(false);
+        return;
       } else {
-        alert('Invalid credentials. Use admin@gravora.com / demo123');
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        onLogin({ email: data.user.email, name: 'User', role: 'User' });
       }
+    } catch (err) {
+      alert(`❌ ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -41,7 +48,7 @@ const LoginPage = ({ onLogin }) => {
       padding: '16px'
     }}>
       <div style={{ width: '100%', maxWidth: '448px' }}>
-        {/* Logo */}
+        {/* Logo and Title */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{
             display: 'inline-flex',
@@ -84,9 +91,7 @@ const LoginPage = ({ onLogin }) => {
                 fontSize: '14px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>
-                Email Address
-              </label>
+              }}>Email Address</label>
               <input
                 type="email"
                 value={email}
@@ -112,9 +117,7 @@ const LoginPage = ({ onLogin }) => {
                 fontSize: '14px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>
-                Password
-              </label>
+              }}>Password</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
