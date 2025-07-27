@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { supabase } from '../../lib/supabase'; // ✅ Make sure this path is correct
+import { supabase } from '../../lib/supabase'; // ensure this path is correct
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -14,25 +14,33 @@ const LoginPage = ({ onLogin }) => {
     setIsLoading(true);
 
     try {
-      // ✅ Hardcoded admin login
+      // ✅ 1. Allow hardcoded admin for testing
       if (!isRegistering && email === 'admin@gravora.com' && password === 'demo123') {
         onLogin({ email, name: 'Admin User', role: 'Administrator' });
         return;
       }
 
+      // ✅ 2. Registration
       if (isRegistering) {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        alert('✅ Registered! You can now login.');
+        alert('✅ Registered! Please log in.');
         setIsRegistering(false);
         return;
-      } else {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        onLogin({ email: data.user.email, name: 'User', role: 'User' });
       }
+
+      // ✅ 3. Real login via Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      // Optional: you can fetch user metadata here for role
+      onLogin({
+        email: data.user.email,
+        name: data.user.email.split('@')[0],
+        role: 'User', // TODO: Replace with actual role if available
+      });
     } catch (err) {
-      alert(`❌ ${err.message}`);
+      alert(`❌ ${err.message || 'Login failed'}`);
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +56,7 @@ const LoginPage = ({ onLogin }) => {
       padding: '16px'
     }}>
       <div style={{ width: '100%', maxWidth: '448px' }}>
-        {/* Logo and Title */}
+        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{
             display: 'inline-flex',
@@ -86,12 +94,7 @@ const LoginPage = ({ onLogin }) => {
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                color: '#cbd5e1',
-                fontSize: '14px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>Email Address</label>
+              <label style={{ color: '#cbd5e1', fontSize: '14px', display: 'block', marginBottom: '8px' }}>Email Address</label>
               <input
                 type="email"
                 value={email}
@@ -112,12 +115,7 @@ const LoginPage = ({ onLogin }) => {
             </div>
 
             <div style={{ marginBottom: '24px', position: 'relative' }}>
-              <label style={{
-                color: '#cbd5e1',
-                fontSize: '14px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>Password</label>
+              <label style={{ color: '#cbd5e1', fontSize: '14px', display: 'block', marginBottom: '8px' }}>Password</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -191,9 +189,7 @@ const LoginPage = ({ onLogin }) => {
 
         {/* Footer */}
         <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <p style={{ color: '#64748b', fontSize: '14px' }}>
-            © 2025 Gravora GRC Solutions. All rights reserved.
-          </p>
+          <p style={{ color: '#64748b', fontSize: '14px' }}>© 2025 Gravora GRC Solutions. All rights reserved.</p>
         </div>
       </div>
     </div>
