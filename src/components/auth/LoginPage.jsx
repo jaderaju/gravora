@@ -11,19 +11,22 @@ const LoginPage = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (isRegistering) {
-      alert(`✅ Registered user: ${email}\nYou can now login.`);
-      setIsRegistering(false);
-      setIsLoading(false);
-      return;
-    }
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (email === 'admin@gravora.com' && password === 'demo123') {
-      onLogin({ email, name: 'Admin User', role: 'Administrator' });
-    } else {
-      alert('Invalid credentials. Use admin@gravora.com / demo123');
+      if (isRegistering) {
+        alert(`✅ Registered user: ${email}\nYou can now login.`);
+        setIsRegistering(false);
+        return;
+      }
+
+      if (email === 'admin@gravora.com' && password === 'demo123') {
+        onLogin({ email, name: 'Admin User', role: 'Administrator' });
+      } else {
+        alert('Invalid credentials. Use admin@gravora.com / demo123');
+      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -64,13 +67,26 @@ const LoginPage = ({ onLogin }) => {
           padding: '32px',
           border: '1px solid rgba(71, 85, 105, 0.5)'
         }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', textAlign: 'center', marginBottom: '32px' }}>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: 'white',
+            textAlign: 'center',
+            marginBottom: '32px'
+          }}>
             {isRegistering ? 'Register New User' : 'Welcome Back'}
           </h2>
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ color: '#cbd5e1', fontSize: '14px', display: 'block', marginBottom: '8px' }}>Email Address</label>
+              <label style={{
+                color: '#cbd5e1',
+                fontSize: '14px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                Email Address
+              </label>
               <input
                 type="email"
                 value={email}
@@ -91,7 +107,14 @@ const LoginPage = ({ onLogin }) => {
             </div>
 
             <div style={{ marginBottom: '24px', position: 'relative' }}>
-              <label style={{ color: '#cbd5e1', fontSize: '14px', display: 'block', marginBottom: '8px' }}>Password</label>
+              <label style={{
+                color: '#cbd5e1',
+                fontSize: '14px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                Password
+              </label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -165,7 +188,9 @@ const LoginPage = ({ onLogin }) => {
 
         {/* Footer */}
         <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <p style={{ color: '#64748b', fontSize: '14px' }}>© 2025 Gravora GRC Solutions. All rights reserved.</p>
+          <p style={{ color: '#64748b', fontSize: '14px' }}>
+            © 2025 Gravora GRC Solutions. All rights reserved.
+          </p>
         </div>
       </div>
     </div>
