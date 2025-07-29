@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '../../lib/supabase.js';
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,30 +13,15 @@ const LoginPage = ({ onLogin }) => {
     setIsLoading(true);
 
     try {
-      // ✅ 1. Allow hardcoded admin for testing
-      if (!isRegistering && email === 'admin@gravora.com' && password === 'demo123') {
+      // ✅ Hardcoded login
+      if (email === 'admin@gravora.com' && password === 'demo123') {
+        toast.success('✅ Login successful');
         onLogin({ email, name: 'Admin User', role: 'Administrator' });
         return;
       }
 
-      // ✅ 2. Registration
-      if (isRegistering) {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast.success('✅ Registered! Please log in.');
-        setIsRegistering(false);
-        return;
-      }
-
-      // ✅ 3. Real login via Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-
-      onLogin({
-        email: data.user.email,
-        name: data.user.email.split('@')[0],
-        role: 'User', // TODO: Replace with actual role if available
-      });
+      // ❌ Invalid credentials
+      throw new Error('Invalid email or password');
     } catch (err) {
       toast.error(`❌ ${err.message || 'Login failed'}`);
     } finally {
@@ -89,7 +72,7 @@ const LoginPage = ({ onLogin }) => {
             textAlign: 'center',
             marginBottom: '32px'
           }}>
-            {isRegistering ? 'Register New User' : 'Welcome Back'}
+            Welcome Back
           </h2>
 
           <form onSubmit={handleSubmit}>
@@ -166,25 +149,9 @@ const LoginPage = ({ onLogin }) => {
                 marginBottom: '12px'
               }}
             >
-              {isLoading ? 'Processing...' : isRegistering ? 'Register Account' : 'Sign In to Gravora GRC'}
+              {isLoading ? 'Processing...' : 'Sign In to Gravora GRC'}
             </button>
           </form>
-
-          <div style={{ textAlign: 'center' }}>
-            <button
-              onClick={() => setIsRegistering(!isRegistering)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#93c5fd',
-                fontSize: '14px',
-                marginTop: '8px',
-                cursor: 'pointer'
-              }}
-            >
-              {isRegistering ? '← Back to Login' : 'New here? Register'}
-            </button>
-          </div>
         </div>
 
         {/* Footer */}
