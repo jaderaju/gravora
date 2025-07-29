@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Supabase configuration for Gravora GRC Platform
-const supabaseUrl = 'https://your-project.supabase.co'
-const supabaseAnonKey = 'your-anon-key'
+const supabaseUrl = 'https://qkrlwwahhghkfvptwgpc.supabase.co'
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrcmx3d2FoaGdoa2Z2cHR3Z3BjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2MDg5NjksImV4cCI6MjA2OTE4NDk2OX0.Mb4ykOJ_zrp7ZzmgFRqhvJXTwOaZ77mXM7WC9Jfheq0'
 
 // For development, we'll use a demo configuration
 // In production, these would be environment variables
-const DEMO_SUPABASE_URL = 'https://demo-gravora-grc.supabase.co'
-const DEMO_SUPABASE_ANON_KEY = 'demo-key-for-development'
+const DEMO_SUPABASE_URL = 'https://qkrlwwahhghkfvptwgpc.supabase.co'
+const DEMO_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrcmx3d2FoaGdoa2Z2cHR3Z3BjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2MDg5NjksImV4cCI6MjA2OTE4NDk2OX0.Mb4ykOJ_zrp7ZzmgFRqhvJXTwOaZ77mXM7WC9Jfheq0'
+
 
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL || DEMO_SUPABASE_URL,

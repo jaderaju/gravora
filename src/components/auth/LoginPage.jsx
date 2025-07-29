@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
+import { supabase } from '../../lib/supabase.js';
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -11,19 +13,35 @@ const LoginPage = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (isRegistering) {
-      alert(`✅ Registered user: ${email}\nYou can now login.`);
-      setIsRegistering(false);
-      setIsLoading(false);
-      return;
-    }
+    try {
+      // ✅ 1. Allow hardcoded admin for testing
+      if (!isRegistering && email === 'admin@gravora.com' && password === 'demo123') {
+        onLogin({ email, name: 'Admin User', role: 'Administrator' });
+        return;
+      }
 
-    if (email === 'admin@gravora.com' && password === 'demo123') {
-      onLogin({ email, name: 'Admin User', role: 'Administrator' });
-    } else {
-      alert('Invalid credentials. Use admin@gravora.com / demo123');
+      // ✅ 2. Registration
+      if (isRegistering) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        toast.success('✅ Registered! Please log in.');
+        setIsRegistering(false);
+        return;
+      }
+
+      // ✅ 3. Real login via Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      onLogin({
+        email: data.user.email,
+        name: data.user.email.split('@')[0],
+        role: 'User', // TODO: Replace with actual role if available
+      });
+    } catch (err) {
+      toast.error(`❌ ${err.message || 'Login failed'}`);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -64,7 +82,13 @@ const LoginPage = ({ onLogin }) => {
           padding: '32px',
           border: '1px solid rgba(71, 85, 105, 0.5)'
         }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', textAlign: 'center', marginBottom: '32px' }}>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: 'white',
+            textAlign: 'center',
+            marginBottom: '32px'
+          }}>
             {isRegistering ? 'Register New User' : 'Welcome Back'}
           </h2>
 
