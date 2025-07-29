@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 import { supabase } from '../../lib/supabase.js';
 
 const LoginPage = ({ onLogin }) => {
@@ -24,7 +25,7 @@ const LoginPage = ({ onLogin }) => {
       if (isRegistering) {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        alert('✅ Registered! Please log in.');
+        toast.success('✅ Registered! Please log in.');
         setIsRegistering(false);
         return;
       }
@@ -33,14 +34,13 @@ const LoginPage = ({ onLogin }) => {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
-      // Optional: you can fetch user metadata here for role
       onLogin({
         email: data.user.email,
         name: data.user.email.split('@')[0],
         role: 'User', // TODO: Replace with actual role if available
       });
     } catch (err) {
-      alert(`❌ ${err.message || 'Login failed'}`);
+      toast.error(`❌ ${err.message || 'Login failed'}`);
     } finally {
       setIsLoading(false);
     }
